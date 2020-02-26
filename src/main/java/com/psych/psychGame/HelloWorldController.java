@@ -1,9 +1,7 @@
 package com.psych.psychGame;
 
-import com.psych.psychGame.model.GameMode;
-import com.psych.psychGame.model.Player;
-import com.psych.psychGame.model.Question;
-import com.psych.psychGame.repositories.PlayerRepository;
+import com.psych.psychGame.model.*;
+import com.psych.psychGame.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +19,14 @@ public class HelloWorldController {
     private PlayerRepository playerRepository;
     @Autowired
     private QuestionRepository questionRepository;
+    @Autowired
+    private GameRepository gameRepository;
+    @Autowired
+    private AdminRepository adminRepository;
+    @Autowired
+    private RoundRepository roundRepository;
+    @Autowired
+    private ContentWriterRepository contentWriterRepository;
 
     @GetMapping("/")
     public String hello() {
@@ -29,6 +35,10 @@ public class HelloWorldController {
 
     @GetMapping("/populate")
     public String populateDB() {
+        questionRepository.deleteAll();
+        playerRepository.deleteAll();
+        gameRepository.deleteAll();
+
         Player luffy = new Player.Builder()
                 .alias("Monkey D. Luffy")
                 .email("luffy@interviewbit.com")
@@ -43,6 +53,12 @@ public class HelloWorldController {
                 .build();
         playerRepository.save(robin);
 
+        Game game = new Game();
+        game.setGameMode(GameMode.IS_THIS_A_FACT);
+        game.setLeader(luffy);
+        game.getPlayers().add(luffy);
+        gameRepository.save(game);
+
         questionRepository.save(new Question(
                 "What is the most important Poneglyph",
                 "Rio Poneglyph",
@@ -51,6 +67,7 @@ public class HelloWorldController {
         return "populated";
     }
 
+    // questions
     @GetMapping("/questions")
     public List<Question> getAllQuestions() {
         return questionRepository.findAll();
@@ -61,20 +78,58 @@ public class HelloWorldController {
         return questionRepository.findById(id).orElseThrow();
     }
 
+    // players
     @GetMapping("/players")
     public List<Player> getAllPlayers() {
         return playerRepository.findAll();
     }
 
-    @GetMapping("/players/{id}")
+    @GetMapping("/player/{id}")
     public Player getPlayerById(@PathVariable(name = "id") Long id) {
         return playerRepository.findById(id).orElseThrow();
     }
-    // games
-    // players
-    // admins
-    // questions
-    // rounds
-    // contentwriters
 
+    // games
+    @GetMapping("/games")
+    public List<Game> getAllGames() {
+        return gameRepository.findAll();
+    }
+
+    @GetMapping("/game/{id}")
+    public Game getGameById(@PathVariable(name = "id") Long id) {
+        return gameRepository.findById(id).orElseThrow();
+    }
+
+    // admins
+    @GetMapping("/admins")
+    public List<Admin> getAllAdmins() {
+        return adminRepository.findAll();
+    }
+
+    @GetMapping("/admin/{id}")
+    public Admin getAdminById(@PathVariable(name = "id") Long id) {
+        return adminRepository.findById(id).orElseThrow();
+    }
+
+    // rounds
+    @GetMapping("/rounds")
+    public List<Round> getAllRounds() {
+        return roundRepository.findAll();
+    }
+
+    @GetMapping("/round/{id}")
+    public Round getRoundById(@PathVariable(name = "id") Long id) {
+        return roundRepository.findById(id).orElseThrow();
+    }
+
+    // contentwriters
+    @GetMapping("/contentwriters")
+    public List<ContentWriter> getAllContentWriters() {
+        return contentWriterRepository.findAll();
+    }
+
+    @GetMapping("/contentwriter/{id}")
+    public ContentWriter getContentWriterById(@PathVariable(name = "id") Long id) {
+        return contentWriterRepository.findById(id).orElseThrow();
+    }
 }
