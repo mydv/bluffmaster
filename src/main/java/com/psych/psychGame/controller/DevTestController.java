@@ -1,5 +1,6 @@
-package com.psych.psychGame;
+package com.psych.psychGame.controller;
 
+import com.psych.psychGame.QuestionRepository;
 import com.psych.psychGame.model.*;
 import com.psych.psychGame.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/dev-test")
-public class HelloWorldController {
+public class DevTestController {
 
     // dependency injection ion spring
     @Autowired
@@ -21,6 +22,8 @@ public class HelloWorldController {
     private QuestionRepository questionRepository;
     @Autowired
     private GameRepository gameRepository;
+    @Autowired
+    private UserRepository userRepository;
     @Autowired
     private AdminRepository adminRepository;
     @Autowired
@@ -35,9 +38,13 @@ public class HelloWorldController {
 
     @GetMapping("/populate")
     public String populateDB() {
+        for (Player player:playerRepository.findAll()) {
+            player.getGames().clear();
+            playerRepository.save(player);
+        }
+        gameRepository.deleteAll();
         questionRepository.deleteAll();
         playerRepository.deleteAll();
-        gameRepository.deleteAll();
 
         Player luffy = new Player.Builder()
                 .alias("Monkey D. Luffy")
@@ -87,6 +94,17 @@ public class HelloWorldController {
     @GetMapping("/player/{id}")
     public Player getPlayerById(@PathVariable(name = "id") Long id) {
         return playerRepository.findById(id).orElseThrow();
+    }
+
+    // users
+    @GetMapping("/users")
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    @GetMapping("/user/{id}")
+    public User getUserById(@PathVariable(name = "id") Long id) {
+        return userRepository.findById(id).orElseThrow();
     }
 
     // games
