@@ -2,6 +2,7 @@ package com.psych.psychGame.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.psych.psychGame.controller.GamePlayController;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -51,6 +52,10 @@ public class Player extends User {
         setAlias(builder.alias);
         setPsychFaceURL(builder.psychFaceURL);
         setPicURL(builder.picURL);
+    }
+
+    public Game getCurrentGame() {
+        // todo
     }
 
     public static final class Builder {
